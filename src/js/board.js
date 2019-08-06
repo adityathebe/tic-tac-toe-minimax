@@ -35,7 +35,8 @@ class Board {
 
   display() {
     for (const row of this.grid) {
-      console.log(row.join('-'));
+      const displayableRow = row.map(x => (typeof x === 'number' ? '' : x));
+      console.log(displayableRow.join('-'));
     }
   }
 
@@ -84,10 +85,6 @@ class Board {
 
   placeAndProceed(x, y) {
     this.placeOnCell(x, y);
-    if (this.isTerminalState()) {
-      // this.resetBoard();
-      return;
-    }
-    this.togglePlayer();
+    if (!this.isTerminalState()) this.togglePlayer();
   }
 }

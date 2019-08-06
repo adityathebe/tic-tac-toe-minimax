@@ -1,7 +1,4 @@
 function setup() {
-  createCanvas(200, 200);
-  background(172);
-
   const board = new Board();
   while (!board.isTerminalState()) {
     if (board.currentPlayer === 'X') {
