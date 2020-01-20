@@ -1,14 +1,18 @@
+const CELL_WIDTH = 200;
+const CELL_HEIGHT = 200;
+const GRID = [
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+];
+
 class Board {
   constructor(boardConfig) {
     this.playerA = 'X';
     this.playerB = 'O';
     this.vacantCells = 9;
     this.currentPlayer = this.playerA;
-    this.grid = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-    ];
+    this.grid = JSON.parse(JSON.stringify(GRID));
 
     if (boardConfig) {
       this.grid = boardConfig.grid;
@@ -18,11 +22,7 @@ class Board {
   }
 
   resetBoard() {
-    this.grid = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-    ];
+    this.grid = JSON.parse(JSON.stringify(GRID));
   }
 
   getGrid() {
@@ -45,9 +45,27 @@ class Board {
   }
 
   display() {
-    for (const row of this.grid) {
-      const displayableRow = row.map(x => (typeof x === 'number' ? '' : x));
-      console.log(displayableRow.join('-'));
+    for (let rowIdx = 0; rowIdx < 3; rowIdx += 1) {
+      for (let colIdx = 0; colIdx < 3; colIdx += 1) {
+        const x = colIdx * CELL_WIDTH;
+        const y = rowIdx * CELL_HEIGHT;
+
+        // DRAW CELLS
+        stroke('black');
+        fill('skyblue');
+        rect(x, y, CELL_WIDTH, CELL_HEIGHT);
+
+        // FILL THE CELLS
+        stroke('red');
+        const val = this.grid[rowIdx][colIdx];
+        if (val === 'X') {
+          line(x, y, x + CELL_WIDTH, y + CELL_HEIGHT);
+          line(x + CELL_WIDTH, y, x, y + CELL_HEIGHT);
+        } else if (val === 'O') {
+          noFill();
+          ellipse(x + CELL_WIDTH / 2, y + CELL_HEIGHT / 2, CELL_HEIGHT);
+        }
+      }
     }
   }
 
