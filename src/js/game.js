@@ -1,26 +1,7 @@
 const board = new Board();
 
 function setup() {
-  // p5
   createCanvas(600, 600);
-
-  // while (!board.isTerminalState()) {
-  //   if (board.currentPlayer === 'X') {
-  //     const result = prompt('Enter Cell Coordinates');
-  //     const [x, y] = result.split(' ');
-  //     console.log(`Player Moved - (${x}, ${y})`);
-  //     board.placeAndProceed(x, y);
-  //   } else {
-  //     const [x, y] = Minimax.getBestCell(board, 'O').move;
-  //     console.log(`AI Moved - (${x}, ${y})`);
-  //     board.placeAndProceed(x, y);
-  //   }
-  //   console.log('\n');
-  //   board.display();
-  // }
-
-  // const { status, winner } = board.isTerminalState();
-  // console.log({ status, winner });
 }
 
 function draw() {
@@ -29,6 +10,7 @@ function draw() {
 }
 
 function _getCellFromCoordinate(x, y) {
+  if (x < 0 || y < 0) throw new Error('Out of coordinate');
   if (y < 200) {
     if (x < 200) return { x: 0, y: 0 };
     if (x < 400) return { x: 0, y: 1 };
@@ -46,16 +28,19 @@ function _getCellFromCoordinate(x, y) {
 
 function mouseClicked() {
   const cell = _getCellFromCoordinate(mouseX, mouseY);
-  board.placeAndProceed(cell.x, cell.y);
-
-  if (board.isTerminalState()) {
-    const { status, winner } = board.isTerminalState();
-    setTimeout(() => {
-      alert(JSON.stringify({ status, winner }));
-    }, 100);
-  } else {
-    // AI's turn
-    const [x, y] = Minimax.getBestCell(board, 'O').move;
-    board.placeAndProceed(x, y);
+  try {
+    board.placeAndProceed(cell.x, cell.y);
+    if (board.isTerminalState()) {
+      const { status, winner } = board.isTerminalState();
+      setTimeout(() => {
+        alert(JSON.stringify({ status, winner }));
+      }, 100);
+    } else {
+      // AI's turn
+      const [x, y] = Minimax.getBestCell(board, 'O').move;
+      board.placeAndProceed(x, y);
+    }
+  } catch (err) {
+    console.error(err);
   }
 }

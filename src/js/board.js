@@ -134,12 +134,7 @@ class Board {
 
   placeOnCell(x, y) {
     if (!this.validMove(x, y)) {
-      return console.error({
-        msg: 'Invalid Move',
-        cell: { x, y },
-        player: this.currentPlayer,
-        grid: this.getGrid(),
-      });
+      throw new Error('Invalid Move. Cell is not vacant');
     }
     this.grid[x][y] = this.currentPlayer;
     this.vacantCells -= 1;
