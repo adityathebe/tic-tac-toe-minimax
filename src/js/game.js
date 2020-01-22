@@ -37,8 +37,8 @@ function mouseClicked() {
       }, 100);
     } else {
       // AI's turn
-      const [x, y] = Minimax.getBestCell(board, 'O').move;
-      board.placeAndProceed(x, y);
+      const bestMove = Minimax.getBestMove(board);
+      board.placeAndProceed(bestMove[0], bestMove[1]);
     }
   } catch (err) {
     console.error(err);

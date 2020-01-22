@@ -1,48 +1,86 @@
+const AI_PLAYER = 'O';
+const HUMAN_PLAYER = 'X';
+
 class Minimax {
-  static getBestCell(board, aiPlayer, level = 0) {
-    const vacantCells = board.getVacantCells();
+  static togglePlayer(player) {
+    return player == 'X' ? 'O' : 'X';
+  }
 
-    // Terminal Node
-    if (vacantCells.length === 0 || board.isTerminalState()) {
-      const { status, winner } = board.isTerminalState();
-      let score = 0; // Draw
-      if (status === 'win') {
-        if (winner == aiPlayer) score = 1;
-        else score = -1;
-      }
-      return { score };
-    }
+  static max(a, b) {
+    return a > b ? a : b;
+  }
 
-    const scores = [];
-    for (const vacantCell of vacantCells) {
+  static min(a, b) {
+    return a < b ? a : b;
+  }
+
+  static getBestMove(board) {
+    let bestMove;
+    let bestScore = -Infinity;
+    for (const vacantCell of board.getVacantCells()) {
       const newBoard = new Board({
         grid: board.getGrid(),
         vacantCells: board.getVacantCells().length,
         currentPlayer: board.currentPlayer,
       });
-      newBoard.placeOnCell(vacantCell[0], vacantCell[1]);
-      newBoard.togglePlayer();
-      const score = Minimax.getBestCell(newBoard, aiPlayer, level + 1);
-      scores.push({ score: score.score, move: vacantCell });
+      newBoard.placeAndProceed(vacantCell[0], vacantCell[1]);
+      const score = Minimax.getScore(newBoard, false, 0);
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestMove = vacantCell;
+      }
+    }
+    return bestMove;
+  }
+
+  static getScore(board, isMaximizingPlayer = true, level = 0) {
+    const vacantCells = board.getVacantCells();
+
+    // Terminal Node
+    if (vacantCells.length === 0 || board.isTerminalState()) {
+      // Calulate heuristic value
+      const { status, winner } = board.isTerminalState();
+      if (status === 'win') {
+        if (winner == AI_PLAYER) return 1;
+        else if (winner == HUMAN_PLAYER) return -1;
+        else throw new Error('Unknown player');
+      } else if (status === 'draw') {
+        return 0;
+      } else {
+        throw new Error('Unknown game status');
+      }
     }
 
-    // Select & return best score
-    if (level == 0) {
-      let bestScore = 0;
-      let bestMove = scores[0].move;
-      for (const score of scores) {
-        if (score.score > bestScore) {
-          bestScore = score.score;
-          bestMove = score.move;
-        }
+    if (isMaximizingPlayer) {
+      let value = -Infinity;
+      for (const vacantCell of vacantCells) {
+        const newBoard = new Board({
+          grid: board.getGrid(),
+          vacantCells: board.getVacantCells().length,
+          currentPlayer: board.currentPlayer,
+        });
+        newBoard.placeOnCell(vacantCell[0], vacantCell[1]);
+        newBoard.togglePlayer();
+        value = Minimax.max(
+          value,
+          Minimax.getScore(newBoard, false, level + 1)
+        );
       }
-      return { score: bestScore, move: bestMove };
+      return value;
     } else {
-      let aggregatedScore = 0;
-      for (const score of scores) {
-        aggregatedScore += score.score;
+      let value = Infinity;
+      for (const vacantCell of vacantCells) {
+        const newBoard = new Board({
+          grid: board.getGrid(),
+          vacantCells: board.getVacantCells().length,
+          currentPlayer: board.currentPlayer,
+        });
+        newBoard.placeOnCell(vacantCell[0], vacantCell[1]);
+        newBoard.togglePlayer();
+        value = Minimax.min(value, Minimax.getScore(newBoard, true, level + 1));
       }
-      return { score: aggregatedScore };
+      return value;
     }
   }
 }
