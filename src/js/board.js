@@ -53,21 +53,21 @@ class Board {
         // DRAW CELLS
         strokeWeight(4);
         stroke('black');
-       
+
         fill('#FFFFCC');
         rect(x, y, CELL_WIDTH, CELL_HEIGHT);
 
         // FILL THE CELLS
-        
+
         stroke('#C10E0E');
         strokeWeight(3);
         const val = this.grid[rowIdx][colIdx];
         if (val === 'X') {
-          line(x+20, y+20, x + CELL_WIDTH-20, y + CELL_HEIGHT-20);
-          line(x + CELL_WIDTH-20, y+20, x+20, y + CELL_HEIGHT-20);
+          line(x + 20, y + 20, x + CELL_WIDTH - 20, y + CELL_HEIGHT - 20);
+          line(x + CELL_WIDTH - 20, y + 20, x + 20, y + CELL_HEIGHT - 20);
         } else if (val === 'O') {
           noFill();
-          ellipse(x + CELL_WIDTH / 2, y + CELL_HEIGHT / 2, CELL_HEIGHT -30);
+          ellipse(x + CELL_WIDTH / 2, y + CELL_HEIGHT / 2, CELL_HEIGHT - 30);
         }
       }
     }
